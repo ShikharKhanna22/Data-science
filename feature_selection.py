@@ -94,3 +94,20 @@ sel_.fit(X_train.fillna(0), y_train)
 # RFE
 sel_ = RFE(GradientBoostingClassifier(), n_features_to_select=10)
 sel_.fit(X_train.fillna(0), y_train)
+
+# 9.) Quick way to get feature importance withiout andy special cleaning
+from sklearn.ensemble import RandomForestClassifier
+# Create a copy to work with
+X = train.copy()
+# Save and drop labels
+y = train.y
+X = X.drop('y', axis=1)
+# fill NANs 
+X = X.fillna(-999)
+# Label encoder
+for c in train.columns[train.dtypes == 'object']:
+    X[c] = X[c].factorize()[0]
+rf = RandomForestClassifier()
+rf.fit(X,y)
+plt.plot(rf.feature_importances_)
+plt.xticks(np.arange(X.shape[1]), X.columns.tolist(), rotation=90);
